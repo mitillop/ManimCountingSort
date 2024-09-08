@@ -40,13 +40,14 @@ class ArrayVisualization(Scene):
         c_groups = []
 
         for i, value in enumerate(counter):
-            c_box = Square(side_length=1, color=WHITE).move_to(
+            c_box = Square(side_length=1, color=LIGHT_PINK).move_to(
                 [-5 + (i), 0, 0])
             c_boxes.append(c_box)
 
             # Crear el texto con el valor del elemento dentro del rectángulo
             c_text = Text(str(value)).move_to(c_box.get_center())
-            c_index = Text(str(i), font_size=24).move_to(c_box.get_center() + UP)
+            c_index = Text(str(i), font_size=24).move_to(
+                c_box.get_center() + UP)
             c_groups.append(VGroup(c_box, c_text, c_index))
 
         c_array_group = VGroup(*c_groups)
@@ -54,14 +55,27 @@ class ArrayVisualization(Scene):
         self.play(Create(c_array_group))
         self.wait(2)
         self.play(c_array_group.animate.shift(DOWN * 1))
-        
+
         sorted_array = [0] * 10
 
+        j = 0
         for i in array:
             self.wait(0.5)
-            boxes[i].set_color(BLUE)
+            s2 = SurroundingRectangle(groups[j][0], color=YELLOW)
+            self.play(Write(s2))
             counter[i] = counter[i] + 1
-        print(array)
+            s = SurroundingRectangle(c_groups[i], color=YELLOW)
+            self.play(Write(s))
+            self.play(Transform(c_groups[i][1], Text(
+                str(counter[i])).move_to(c_boxes[i].get_center())))
+            c_boxes[i].set_color(LIGHT_PINK)
+            self.play(Transform(s, SurroundingRectangle(
+                c_groups[i], color=None)))
+            self.play(Transform(s2, SurroundingRectangle(
+                groups[j][0], color=None)))
+            boxes[j].set_color(BLUE)
+            j += 1
+
         for i in range(1, len(counter)):
             counter[i] += counter[i - 1]
 
@@ -69,7 +83,7 @@ class ArrayVisualization(Scene):
             sorted_array[counter[array[i]] - 1] = array[i]
             counter[array[i]] -= 1
 
-        # ORDENAMIENTO
+        # Sorted array
         for i, value in enumerate(sorted_array):
             new_text = Text(str(value)).move_to(boxes[i].get_center())
             self.play(Transform(groups[i][1], new_text))

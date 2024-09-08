@@ -53,14 +53,13 @@ class ArrayVisualization(Scene):
         c_array_group = VGroup(*c_groups)
         c_array_group.arrange()
         self.play(Create(c_array_group))
-        self.wait(2)
+        self.wait(1)
         self.play(c_array_group.animate.shift(DOWN * 1))
 
         sorted_array = [0] * 10
 
         j = 0
         for i in array:
-            self.wait(0.5)
             s2 = SurroundingRectangle(groups[j][0], color=YELLOW)
             self.play(Write(s2))
             counter[i] = counter[i] + 1
@@ -68,12 +67,13 @@ class ArrayVisualization(Scene):
             self.play(Write(s))
             self.play(Transform(c_groups[i][1], Text(
                 str(counter[i])).move_to(c_boxes[i].get_center())))
+            color_change = boxes[j].copy().set_color(BLUE)
+            self.play(Transform(boxes[j], color_change))
             c_boxes[i].set_color(LIGHT_PINK)
-            self.play(Transform(s, SurroundingRectangle(
-                c_groups[i], color=None)))
             self.play(Transform(s2, SurroundingRectangle(
                 groups[j][0], color=None)))
-            boxes[j].set_color(BLUE)
+            self.play(Transform(s, SurroundingRectangle(
+                c_groups[i], color=None)))
             j += 1
 
         for i in range(1, len(counter)):
@@ -87,6 +87,7 @@ class ArrayVisualization(Scene):
         for i, value in enumerate(sorted_array):
             new_text = Text(str(value)).move_to(boxes[i].get_center())
             self.play(Transform(groups[i][1], new_text))
-            boxes[i].set_color(GREEN)
+            color_change = boxes[i].copy().set_color(GREEN)
+            self.play(Transform(boxes[i], color_change))
 
         self.wait(2)

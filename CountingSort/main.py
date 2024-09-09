@@ -10,7 +10,7 @@ def generador_entrada(size):
     return vector
 
 
-class ArrayVisualization(Scene):
+class CountingSort(Scene):
     def construct(self):
         # Definir los elementos del arreglo
 
@@ -91,7 +91,7 @@ class ArrayVisualization(Scene):
         s_boxes = []
         s_groups = []
         for i, value in enumerate(sorted_array):
-            s_box = Square(side_length=1, color=YELLOW).move_to(
+            s_box = Square(side_length=1, color=GREEN).move_to(
                 [-5 + (i), 0, 0])
             s_boxes.append(s_box)
             s_text = Text(str(value)).move_to(s_box.get_center())
@@ -110,35 +110,38 @@ class ArrayVisualization(Scene):
         self.play(array_copy.animate.shift(DOWN * 1)) 
         
         for i in range(len(array) - 1, -1, -1):
-            s_s = SurroundingRectangle(array_copy[i][1], color=YELLOW) 
-            s_c = SurroundingRectangle(c_groups[array[i]][2], color=YELLOW) 
-            s_sort = SurroundingRectangle(s_array_group[counter[array[i]] - 1][2], color=YELLOW)
-            
+            s_s = SurroundingRectangle(array_copy[i][1], color=YELLOW)  # Resalta el elemento del array original
+            s_c = SurroundingRectangle(c_groups[array[i]][2], color=YELLOW)  # Resalta el índice en el contador
+
             self.play(Write(s_s))
             self.play(Write(s_c))
             
             pos = counter[array[i]] - 1
 
             counter[array[i]] -= 1
-
+            
             minus = Text(str(counter[array[i]])).move_to(c_boxes[array[i]].get_center())
             self.play(Transform(c_groups[array[i]][1], minus))
+            
+            highlight_index = SurroundingRectangle(s_array_group[pos][2], color=GREEN)
+            self.play(Create(highlight_index))
+
+            highlight_box = SurroundingRectangle(s_array_group[pos][0], color=YELLOW)
+            self.play(Create(highlight_box))
 
             number = Text(str(array[i])).move_to(s_boxes[pos].get_center())
             self.play(Transform(s_array_group[pos][1], number))
-            self.play(Write(s_sort))
 
             green_box = s_boxes[pos].copy().set_color(GREEN)
             self.play(Transform(s_boxes[pos], green_box))
             
+            
             red = boxes[i].copy().set_color(RED)
             self.play(Transform(boxes[i], red))
-            
+
+            # Desaparecer los rectángulos de resaltado
             self.play(FadeOut(s_s))
             self.play(FadeOut(s_c))
-            self.play(FadeOut(s_sort))
+            self.play(FadeOut(highlight_index))
+            self.play(FadeOut(highlight_box))
 
-
-        
-        print(sorted_array)
-        self.wait(2)
